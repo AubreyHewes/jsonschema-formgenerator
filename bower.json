@@ -1,0 +1,34 @@
+{
+  "name": "jsonschema-formrenderer",
+  "version": "0.0.1",
+  "authors": [
+    "Aubrey Hewes <aubrey@hewes.org.uk>"
+  ],
+  "description": "JSON Schema Form Renderer",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "jquery",
+    "json",
+    "schema",
+    "form",
+    "renderer"
+  ],
+  "license": "ISC",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "build",
+    "src",
+    "test",
+    "gulpfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "jquery": "~1.11.3"
+  }
+}

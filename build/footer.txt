@@ -1,0 +1,7 @@
+
+	return {
+		render: renderForm,
+		renderChunk: renderChunk
+	};
+
+}));
