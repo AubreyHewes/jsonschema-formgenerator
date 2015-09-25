@@ -37,7 +37,20 @@ function renderForm (schema, path, data) {
 		path.push(propName);
 		chunkPromises.push(renderChunk(path, propConfig, data[propName]));
 	});
-	return renderChunks(chunkPromises);
+	return renderChunks(chunkPromises).then(function (html) {
+
+		if (schema.required) {
+			var $html = $('<p>').html(html);
+			$.each(schema.required, function (property) {
+				$html.find(['input', 'textarea', 'select'].map(function (type) {
+					return '.schema-property-' + property + ' > ' + type
+				}).join(',')).attr('required', 'required');
+			});
+			return $html.html();
+		}
+
+		return html;
+	});
 }
 
 function renderChunks(chunkPromises) {
