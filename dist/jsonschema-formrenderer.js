@@ -177,7 +177,7 @@ function renderEnum(propConfig, path, value) {
 			chunk.push('<div>');
 			chunk.push('<input type="radio" name="' + name + '" value="' + radioValue +
 			'" id="' + radioId + '"' + ((radioValue === value) ? ' checked="checked"' : '' ) +
-			'><label for="' + radioId + ''+ '">' + (propConfig.enumTitles[radioValue] || radioValue) +
+			'><label for="' + radioId + ''+ '">' + (propConfig.enumTitles[key] || radioValue) +
 			'</label>');
 			chunk.push('</div>');
 		});
@@ -189,7 +189,7 @@ function renderEnum(propConfig, path, value) {
 		$.each(propConfig['enum'], function (key, optionValue) {
 			chunk.push('<option value="' + optionValue +'"' +
 					((optionValue === value) ? ' selected="selected"' : '' ) +
-					'>' + (enumTitles[optionValue] || optionValue) + '</option>');
+					'>' + (enumTitles[key] || optionValue) + '</option>');
 		});
 		chunk.push('</select>');
 	}
