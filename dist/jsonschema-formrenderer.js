@@ -55,7 +55,7 @@ function renderForm (schema, path, data) {
 
 		if (schema.required) {
 			var $html = $('<p>').html(html);
-			$.each(schema.required, function (property) {
+			$.each(schema.required, function (idx, property) {
 				$html.find(['input', 'textarea', 'select'].map(function (type) {
 					return '.schema-property-' + property + ' > ' + type
 				}).join(',')).attr('required', 'required');
