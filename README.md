@@ -1,6 +1,6 @@
 # JSON Schema Form Renderer
 
-Render a form from a given JSON-Schema.
+Render a form/form-input-structure from a given JSON-Schema.
 
 This created itself due to other projects not "doing" what was required: usable form generation via a JSON schema.
 
@@ -20,11 +20,11 @@ Will render schema as form elements from given path adding possible initial data
 
 #### Modular
 
-    var html = require("jsonschema-formrenderer").renderForm(schema, path, data);
+    var html = require("jsonschema-formrenderer").render(schema, path, data);
     
 #### Global
 
-    var html = JSONSchemaFormRenderer.renderForm(schema, path, data);
+    var html = JSONSchemaFormRenderer.render(schema, path, data);
 
 ### renderChunk
 Will render given schema definition as form elements from given path adding possible initial data to fields.
@@ -44,10 +44,14 @@ Options need to be set before a render action.
 
 ## TODO
  * [ ] add tests
+ * [ ] release script
+ * [ ] CI
+ * [ ] Render-form method which includes form tag and using options (i.e. force array item; to force a minimal array item if none set)
+
+## Possible future
  * [ ] remove jquery dependency
  * [ ] add buttons for action hinting (note action is not included)
  * [ ] add possibility to overload templates (currently hardcoded -- possible Handlebars though adds extra dependency)
-     * i.e. bootstrap correct html (though via css the output html can already be bootstrapped even if it is not the "correct" html )..
- * [ ] release script
- * [ ] CI
+     * i.e. bootstrap-correct html (though via css the output html can already be bootstrapped even if it is not the "correct" html).. also can alsojust be manipulated after render.
+ 
  

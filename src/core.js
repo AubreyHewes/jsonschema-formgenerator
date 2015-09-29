@@ -1,11 +1,25 @@
 // depends on jquery -- todo is to remove dependencies and build for multiple distribution types
 
+/**
+ * Promise render of given chunks
+ *
+ * @param chunkPromises
+ * @returns {*}
+ */
 function renderChunks(chunkPromises) {
 	return $.when.apply($, chunkPromises).then(function () {
 		return $.makeArray(arguments).join('');
 	});
 }
 
+/**
+ *
+ * @export
+ *
+ * @param path
+ * @param propConfig
+ * @param value
+ */
 function renderChunk(path, propConfig, value) {
 	var propName = path.pop();
 	var className = propName;
@@ -23,7 +37,16 @@ function renderChunk(path, propConfig, value) {
 	if ((value === undefined) && (propConfig['default'] !== undefined)) {
 		value = propConfig['default'];
 	}
-	var valueAsString = value || '';
+
+	// custom renderer?
+	if (propConfig.options && propConfig.options.renderer && hasRenderer(propConfig.options.renderer)) {
+		chunk.push(applyRenderer(propConfig, subPath, value, id));
+		chunk.push('</div>');
+		return renderChunks(chunk);
+	}
+
+
+	// @todo generic render type label/input (reduce duplication)
 
 	switch (propConfig.type) {
 		case undefined: //complex type
@@ -39,22 +62,21 @@ function renderChunk(path, propConfig, value) {
 
 		case 'number':
 		case 'integer':
-			//check for "explicit empty"
-			if (propConfig.title && propConfig.title !== '') {
-				chunk.push('<label for="' + id + '">' + (propConfig.title ? propConfig.title : propName)  +
-						'</label>');
+
+			// @todo generic render type label/input (reduce duplication)
+			if (propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
 			}
-
-			chunk.push((propConfig.format === 'immutable' ?
-				renderImmutable : renderNumber)(propConfig, subPath, value, id));
-
+			chunk.push(renderNumber(propConfig, subPath, value, id));
 			break;
 
 		case 'boolean':
-			// inputs before labels
-			chunk.push('<input type="checkbox" name="' + name + '" id="' + id + '" value="1"' +
-					(value ? ' checked="checked"' : '' ) + ' />');
-			chunk.push('<label for="' + id + '">' + propConfig.title + '</label>');
+
+			// @todo generic render type label/input (reduce duplication)
+			chunk.push(renderBoolean(propConfig, subPath, value, id));
+			//if (propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+			//	chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
+			//}
 			break;
 
 		case 'array':
@@ -85,32 +107,32 @@ function renderChunk(path, propConfig, value) {
 			break;
 
 		case 'string':
-			var isEnum = (propConfig['enum'] !== undefined);
-			if (propConfig.title) {
-				chunk.push('<label for="' + id + '">' + propConfig.title +
-						((!isEnum && propConfig.minLength) ? ' *' : '') + '</label>');
-			}
+			// @todo generic render type label/input (reduce duplication)
 
-			if (isEnum) {
-				chunk.push(renderEnum(propConfig, subPath, value));
-			} else {
-				chunk.push((propConfig.format === 'immutable' ?
-						renderImmutable : renderString)(propConfig, subPath, value, id));
+			var isEnum = (propConfig['enum'] !== undefined);
+			if (isEnum || propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName, (!isEnum && propConfig.minLength)));
 			}
+			chunk.push(renderString(propConfig, subPath, value, id));
 			break;
 
 		default:
-			chunk.push('<label for="' + id + '">' + propConfig.title + '</label>');
-			chunk.push('<input type="' + (propConfig.inputType || propConfig.format || 'text') +
-					'" name="' + name + '" id="' + id +
-					(propConfig.description ? '" placeholder="' + propConfig.description : '' ) +
-					'" value="' + valueAsString + '">');
+			throw new Error('Schema item "' + path.join('.') + '" is not valid');
 	}
 
 	chunk.push('</div>');
 	return renderChunks(chunk);
 }
 
+/**
+ *
+ * @export render
+ *
+ * @param schema
+ * @param path
+ * @param data
+ * @returns {*}
+ */
 function renderObject (schema, path, data) {
 	var chunkPromises = [];
 	data = data || {};
@@ -165,35 +187,63 @@ function renderObject (schema, path, data) {
 	});
 }
 
-function renderString(propConfig, path, value, id) {
-	var valueAsString = value || '';
-	return (propConfig.inputType === 'textarea') ?
-		'<textarea type="text" name="' + name +
-			(propConfig.description ? '" placeholder="' + propConfig.description : '' ) +
-			'" id="' + id + '">' + valueAsString + '</textarea>' :
-		'<input type="' + (propConfig.inputType || propConfig.format || 'text') +
-			'" name="' + name +
-			(propConfig.description ? '" placeholder="' + propConfig.description : '' ) +
-			'" id="' + id + '" value="' + valueAsString + '">';
+/**
+ *
+ * @param propConfig
+ * @param path
+ * @param value
+ * @param id
+ *
+ * @returns {string}
+ */
+function renderBoolean (propConfig, path, value, id) {
+	// @todo generic func
+	// NOTE: inputs before labels
+	return '<input type="checkbox" name="' + name + '" id="' + id + '" value="1"' +
+					(value ? ' checked="checked"' : '' ) + ' />' +
+			'<label for="' + id + '">' + propConfig.title + '</label>';
 }
 
+/**
+ *
+ * @param propConfig
+ * @param path
+ * @param value
+ * @param id
+ *
+ * @returns {string}
+ */
 function renderNumber(propConfig, path, value, id) {
-	return (propConfig['enum'] === undefined) ?
-		'<input type="' + (propConfig.inputType || 'number') + '" name="' + name + '" id="' + id +
-			(propConfig.description ? '" placeholder="' + propConfig.description : '' ) +
-			(propConfig.min ? '" min="' + propConfig.min : '' ) +
-			(propConfig.max ? '" max="' + propConfig.max : '' ) +
-			'" value="' + (value || '') + '">'
-		: renderEnum(propConfig, path, value)
-}
-
-function renderImmutable(propConfig, path, value, id) {
-	if ((value === undefined) && (propConfig['default'] !== undefined)) {
-		value = propConfig['default'];
+	if (typeof propConfig['enum'] !== "undefined") {
+		return renderEnum(propConfig, path, value, id);
 	}
-	return '<div class="immutable">'  + value + '</div>';
+	return renderInputControl(propConfig, path, value, id);
 }
 
+/**
+ *
+ * @param propConfig
+ * @param path
+ * @param value
+ * @param id
+ *
+ * @returns {string}
+ */
+function renderString(propConfig, path, value, id) {
+	if (typeof propConfig['enum'] !== "undefined") {
+		return renderEnum(propConfig, path, value, id);
+	}
+	return renderInputControl(propConfig, path, value, id);
+}
+
+/**
+ *
+ * @param propConfig
+ * @param path
+ * @param value
+ *
+ * @returns {string}
+ */
 function renderEnum(propConfig, path, value) {
 	var chunk = [];
 	var id = path.join('-');
@@ -206,9 +256,16 @@ function renderEnum(propConfig, path, value) {
 	var enumTitles = ((propConfig.options && propConfig.options.enum_titles) ?
 			propConfig.options.enum_titles : {});
 
-	if (propConfig.format === 'immutable') {
-		return renderImmutable(propConfig, path, enumTitles[value], id);
+	// custom input renderer
+	var inputRenderer = (propConfig.options && propConfig.options.inputRenderer) ?
+			propConfig.options.inputRenderer : null;
+	if (hasInputRenderer(inputRenderer)) {
+		return applyInputRenderer(inputRenderer, propConfig, path, enumTitles[value], id)
 	}
+
+	// default input renderer
+	var multiple = propConfig.options && propConfig.options.multiple === true;
+	var readOnly = propConfig.options && propConfig.options.readOnly === true;
 	switch(propConfig.inputType) {
 		case 'radio':
 			chunk.push('<div class="radiogroup">');
@@ -225,7 +282,10 @@ function renderEnum(propConfig, path, value) {
 			break;
 
 		default:
-			chunk.push('<select name="' + name + '" id="' + id + '" class="">');
+			chunk.push('<select name="' + name + '" id="' + id + '"' +
+				(readOnly ? ' readonly="readonly"' : '') +
+				(multiple ? ' multiple="multiple"' : '') +
+				'>');
 			$.each(propConfig['enum'], function (key, optionValue) {
 				chunk.push('<option value="' + optionValue +'"' +
 						((optionValue === value) ? ' selected="selected"' : '' ) +
@@ -236,3 +296,68 @@ function renderEnum(propConfig, path, value) {
 
 	return chunk.join('');
 }
+
+/**
+ *
+ * @param id
+ * @param text
+ * @param required
+ *
+ * @returns {string}
+ */
+function renderInputLabel (id, text, required) {
+	return '<label for="' + id + '">' + text + (required ? ' *' : '') + '</label>';
+}
+
+/**
+ *
+ * @param propConfig
+ * @param path
+ * @param id
+ * @param value
+ *
+ * @returns {string}
+ */
+function renderInputControl (propConfig, path, value, id) {
+
+	// determine input type
+	var type = propConfig.options.inputRenderer || propConfig.format || 'text';
+
+	// custom input renderer
+
+	if (hasInputRenderer(type)) {
+		return applyInputRenderer(type, propConfig, path, value, id)
+	}
+
+	// default input renderer
+
+	var name = propConfig.name;
+
+	var description = propConfig.description;
+
+	var readOnly = propConfig.options && propConfig.options.readOnly == true;
+
+	if (type === 'textarea') {
+		return '<textarea type="text"' +
+			(id ? ' id="' + id + '"' : '') +
+			(name ? ' name="' + name + '"' : '') +
+			(description ? ' placeholder="' + description + '"' : '') +
+			(readOnly ? ' readonly="true"' : '') +
+			'>' +
+			(value || '') + '</textarea>';
+	}
+	return '<input ' +
+			(type ? ' type="' + type + '"' : '') +
+			(id ? ' id="' + id + '"' : '') +
+			(name ? ' name="' + name + '"' : '') +
+			(value ? ' value="' + value + '"' : '') +
+			(description ? ' placeholder="' + description + '"' : '') +
+			(readOnly ? ' readonly="true"' : '') +
+			'/>';
+}
+
+//var options = {};
+//function renderForm(schema, data, options) {
+//	this.options = options;
+//	return renderObject(schema, [], data);
+//}

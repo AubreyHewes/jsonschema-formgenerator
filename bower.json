@@ -18,6 +18,7 @@
     "renderer"
   ],
   "license": "ISC",
+  "main": "dist/jsonschema-formrenderer.js",
   "ignore": [
     "**/.*",
     "node_modules",
