@@ -1,6 +1,6 @@
 
 	return {
-		render: renderForm,
+		render: renderObject,
 		renderChunk: renderChunk
 	};
 
