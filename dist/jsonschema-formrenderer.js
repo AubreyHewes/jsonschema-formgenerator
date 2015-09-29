@@ -126,16 +126,30 @@ function renderChunk(path, propConfig, value) {
 			break;
 
 		case 'array':
-			chunk.push('<div class="fieldset">');
-			if (propConfig.title) {
-				chunk.push('<div class="legend">' + propConfig.title + '</div>');
+
+			if (propConfig.items.enum) { // multiple select
+
+				propConfig.items.title = propConfig.title;
+
+				chunk.push(renderChunk(subPath, propConfig.items, value).then(function (html) {
+					var $html = $(html);
+					$html.find('select').prop('multiple', 'multiple');
+					return $html.html();
+				}));
+
+			} else {
+
+				chunk.push('<div class="fieldset">');
+				if (propConfig.title) {
+					chunk.push('<div class="legend">' + propConfig.title + '</div>');
+				}
+				$.each(value || {}, function (key, subData) {
+					var itemSubPath = subPath.slice(0);
+					itemSubPath.push(key);
+					chunk.push(renderChunk(itemSubPath, propConfig.items, subData));
+				});
+				chunk.push('</div>');
 			}
-			$.each(value || {}, function (key, subData) {
-				var itemSubPath = subPath.slice(0);
-				itemSubPath.push(key);
-				chunk.push(renderChunk(itemSubPath, propConfig.items, subData));
-			});
-			chunk.push('</div>');
 			break;
 
 		case 'string':
