@@ -15,6 +15,7 @@
     "json",
     "schema",
     "form",
+    "generator",
     "renderer"
   ],
   "license": "ISC",
