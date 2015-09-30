@@ -1,5 +1,5 @@
 {
-  "name": "jsonschema-formrenderer",
+  "name": "jsonschema-formgenerator",
   "version": "0.0.1",
   "description": "JSON Schema Form Renderer",
   "main": "dist/jsonschema-formrenderer.js",
@@ -15,6 +15,7 @@
     "json",
     "schema",
     "form",
+    "generator",
     "renderer"
   ],
   "homepage": "http://aubreyhewes.github.io/jsonschema-formrenderer",
