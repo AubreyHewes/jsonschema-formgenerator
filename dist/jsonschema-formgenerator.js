@@ -12,7 +12,14 @@
 }(function ($) {
 
 
-// depends on jquery -- todo is to remove dependencies and build for multiple distribution types
+/**
+ * @see http://json-schema.org/latest/json-schema-validation.html#anchor104
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Input
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Textarea
+ *
+ * @todo depends on jquery -- todo is to remove dependencies and build for multiple distribution types
+ */
+
 
 /**
  * Promise render of given chunks
@@ -274,7 +281,7 @@ function renderEnum(propConfig, path, value) {
 	var inputRenderer = (propConfig.options && propConfig.options.inputRenderer) ?
 			propConfig.options.inputRenderer : null;
 	if (hasInputRenderer(inputRenderer)) {
-		return applyInputRenderer(inputRenderer, propConfig, path, enumTitles[value], id)
+		return applyInputRenderer(inputRenderer, propConfig, path, value, id)
 	}
 
 	// default input renderer
@@ -324,6 +331,9 @@ function renderInputLabel (id, text, required) {
 }
 
 /**
+ * @see http://json-schema.org/latest/json-schema-validation.html#anchor104
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Input
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Textarea
  *
  * @param propConfig
  * @param path
@@ -358,6 +368,8 @@ function renderInputControl (propConfig, path, value, id) {
 		return '<textarea type="text"' +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
+			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
+			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
 			'>' +
@@ -367,6 +379,9 @@ function renderInputControl (propConfig, path, value, id) {
 			(type ? ' type="' + type + '"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
+			(propConfig.pattern ? ' pattern="' + propConfig.pattern + '"' : '') +
+			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
+			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(value ? ' value="' + value + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
@@ -411,7 +426,10 @@ function hasRenderer(id) {
  */
 function applyRenderer() {
 	var type = [].shift.call(arguments);
-	return renderers[type].apply(arguments);
+	if (!renderers[type]) {
+		return '';
+	}
+	return renderers[type].apply(this, arguments);
 }
 
 
@@ -449,7 +467,7 @@ function applyInputRenderer() {
 	if (!inputRenderers[type]) {
 		return '';
 	}
-	return inputRenderers[type].apply(arguments);
+	return inputRenderers[type].apply(this, arguments);
 }
 
 /**
