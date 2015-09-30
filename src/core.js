@@ -1,4 +1,11 @@
-// depends on jquery -- todo is to remove dependencies and build for multiple distribution types
+/**
+ * @see http://json-schema.org/latest/json-schema-validation.html#anchor104
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Input
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Textarea
+ *
+ * @todo depends on jquery -- todo is to remove dependencies and build for multiple distribution types
+ */
+
 
 /**
  * Promise render of given chunks
@@ -310,6 +317,9 @@ function renderInputLabel (id, text, required) {
 }
 
 /**
+ * @see http://json-schema.org/latest/json-schema-validation.html#anchor104
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Input
+ * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Textarea
  *
  * @param propConfig
  * @param path
@@ -344,6 +354,8 @@ function renderInputControl (propConfig, path, value, id) {
 		return '<textarea type="text"' +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
+			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
+			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
 			'>' +
@@ -353,6 +365,9 @@ function renderInputControl (propConfig, path, value, id) {
 			(type ? ' type="' + type + '"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
+			(propConfig.pattern ? ' pattern="' + propConfig.pattern + '"' : '') +
+			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
+			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(value ? ' value="' + value + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
