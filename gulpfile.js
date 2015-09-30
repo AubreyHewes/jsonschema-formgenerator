@@ -4,7 +4,7 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 
 var DEST = 'dist/';
-var NAME = 'jsonschema-formrenderer.js';
+var NAME = 'jsonschema-formgenerator.js';
 
 // @todo browserify for requirejs/global version
 
