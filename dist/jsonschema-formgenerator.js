@@ -61,7 +61,7 @@ function renderChunk(path, propConfig, value) {
 
 	// custom renderer?
 	if (propConfig.options && propConfig.options.renderer && hasRenderer(propConfig.options.renderer)) {
-		chunk.push(applyRenderer(propConfig, subPath, value, id));
+		chunk.push(applyRenderer(propConfig.options.renderer, propConfig, subPath, value, id));
 		chunk.push('</div>');
 		return renderChunks(chunk);
 	}
