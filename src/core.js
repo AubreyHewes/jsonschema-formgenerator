@@ -64,7 +64,7 @@ function renderChunk(path, propConfig, value) {
 		case 'integer':
 
 			// @todo generic render type label/input (reduce duplication)
-			if (propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+			if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
 			}
 			chunk.push(renderNumber(propConfig, subPath, value, id));
@@ -74,7 +74,7 @@ function renderChunk(path, propConfig, value) {
 
 			// @todo generic render type label/input (reduce duplication)
 			chunk.push(renderBoolean(propConfig, subPath, value, id));
-			//if (propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+			//if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 			//	chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
 			//}
 			break;
@@ -110,7 +110,7 @@ function renderChunk(path, propConfig, value) {
 			// @todo generic render type label/input (reduce duplication)
 
 			var isEnum = (propConfig['enum'] !== undefined);
-			if (isEnum || propConfig.options && propConfig.options.inputRenderer !== "hidden") {
+			if (isEnum || !(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName, (!isEnum && propConfig.minLength)));
 			}
 			chunk.push(renderString(propConfig, subPath, value, id));
@@ -321,7 +321,10 @@ function renderInputLabel (id, text, required) {
 function renderInputControl (propConfig, path, value, id) {
 
 	// determine input type
-	var type = propConfig.options.inputRenderer || propConfig.format || 'text';
+	var type = propConfig.format || 'text';
+	if (propConfig.options && propConfig.options.inputRenderer) {
+		type = propConfig.options.inputRenderer;
+	}
 
 	// custom input renderer
 
