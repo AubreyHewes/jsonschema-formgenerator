@@ -30,5 +30,8 @@ function hasRenderer(id) {
  */
 function applyRenderer() {
 	var type = [].shift.call(arguments);
-	return renderers[type].apply(arguments);
+	if (!renderers[type]) {
+		return '';
+	}
+	return renderers[type].apply(this, arguments);
 }

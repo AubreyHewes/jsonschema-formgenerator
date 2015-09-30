@@ -33,5 +33,5 @@ function applyInputRenderer() {
 	if (!inputRenderers[type]) {
 		return '';
 	}
-	return inputRenderers[type].apply(arguments);
+	return inputRenderers[type].apply(this, arguments);
 }
