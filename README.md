@@ -45,10 +45,13 @@ _This could be seen as a double but it actually works differently.._
 Options need to be set before a render action.
 
 ## TODO
+ * [ ] simple interface
  * [ ] add tests
  * [ ] release script
  * [ ] CI
  * [ ] Render-form method which includes form tag and using options (i.e. force array item; to force a minimal array item if none set)
+ * [x] jquery plugin/function for appending a rendered schema to current element
+    * [ ] append a rendered schema/form to current element
 
 ### Possible future
  * [ ] remove jquery dependency
