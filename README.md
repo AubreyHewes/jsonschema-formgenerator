@@ -50,7 +50,7 @@ Options need to be set before a render action.
  * [ ] CI
  * [ ] Render-form method which includes form tag and using options (i.e. force array item; to force a minimal array item if none set)
 
-## Possible future
+### Possible future
  * [ ] remove jquery dependency
  * [ ] add buttons for action hinting (note action is not included)
  * [ ] add possibility to overload templates (currently hardcoded -- possible Handlebars though adds extra dependency)
