@@ -1,18 +1,18 @@
 # WIP
 
-# JSON Schema Form Renderer
+# JSON Schema Form Generator
 
-Render a form/form-input-structure from a given JSON-Schema.
+Generate a form/form-input-structure from a given JSON-Schema.
 
 This created itself due to other projects not "doing" what was required: usable form generation via a JSON schema.
 
 Form is generated according to the schema structure and oblivious to the data structure. 
-If the data structure matches then the data will be added as values.
+If the given data structure matches then the data will be added as values.
 
 **DIY**
 
 * style yourself
-* data bind yourself
+* data-bind yourself
 * action yourself (i.e. array needs a "add new item action" which duplicates the array schema as an item) -- possible change
 
 ## Methods
