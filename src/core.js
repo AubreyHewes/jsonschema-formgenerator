@@ -260,7 +260,7 @@ function renderEnum(propConfig, path, value) {
 	var inputRenderer = (propConfig.options && propConfig.options.inputRenderer) ?
 			propConfig.options.inputRenderer : null;
 	if (hasInputRenderer(inputRenderer)) {
-		return applyInputRenderer(inputRenderer, propConfig, path, enumTitles[value], id)
+		return applyInputRenderer(inputRenderer, propConfig, path, value, id)
 	}
 
 	// default input renderer
