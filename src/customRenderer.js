@@ -28,9 +28,9 @@ function hasRenderer(id) {
  *
  * @param propConfig
  * @param path
+ * @param id
  * @param name
  * @param value
- * @param id
  *
  * @returns string
  */
