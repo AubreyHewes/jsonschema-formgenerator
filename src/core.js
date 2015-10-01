@@ -47,11 +47,10 @@ function renderChunk(path, propConfig, value) {
 
 	// custom renderer?
 	if (propConfig.options && propConfig.options.renderer && hasRenderer(propConfig.options.renderer)) {
-		chunk.push(applyRenderer(propConfig.options.renderer, propConfig, subPath, value, id));
+		chunk.push(applyRenderer(propConfig.options.renderer, propConfig, subPath, id, name, value));
 		chunk.push('</div>');
 		return renderChunks(chunk);
 	}
-
 
 	// @todo generic render type label/input (reduce duplication)
 
@@ -74,13 +73,13 @@ function renderChunk(path, propConfig, value) {
 			if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
 			}
-			chunk.push(renderNumber(propConfig, subPath, value, id));
+			chunk.push(renderNumber(propConfig, subPath, id, name, value));
 			break;
 
 		case 'boolean':
 
 			// @todo generic render type label/input (reduce duplication)
-			chunk.push(renderBoolean(propConfig, subPath, value, id));
+			chunk.push(renderBoolean(propConfig, subPath, id, name, value));
 			//if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 			//	chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
 			//}
@@ -120,7 +119,7 @@ function renderChunk(path, propConfig, value) {
 			if (isEnum || !(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
 				chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName, (!isEnum && propConfig.minLength)));
 			}
-			chunk.push(renderString(propConfig, subPath, value, id));
+			chunk.push(renderString(propConfig, subPath, id, name, value));
 			break;
 
 		default:
@@ -198,12 +197,13 @@ function renderObject (schema, path, data) {
  *
  * @param propConfig
  * @param path
- * @param value
  * @param id
+ * @param name
+ * @param value
  *
  * @returns {string}
  */
-function renderBoolean (propConfig, path, value, id) {
+function renderBoolean (propConfig, path, id, name, value) {
 	// @todo generic func
 	// NOTE: inputs before labels
 	return '<input type="checkbox" name="' + name + '" id="' + id + '" value="1"' +
@@ -215,46 +215,50 @@ function renderBoolean (propConfig, path, value, id) {
  *
  * @param propConfig
  * @param path
- * @param value
  * @param id
+ * @param name
+ * @param value
  *
  * @returns {string}
  */
-function renderNumber(propConfig, path, value, id) {
+function renderNumber(propConfig, path, id, name, value) {
 	if (typeof propConfig['enum'] !== "undefined") {
-		return renderEnum(propConfig, path, value, id);
+		return renderEnum(propConfig, path, id, name, value);
 	}
-	return renderInputControl(propConfig, path, value, id);
+	return renderInputControl(propConfig, path, id, name, value);
 }
 
 /**
  *
  * @param propConfig
  * @param path
- * @param value
  * @param id
+ * @param name
+ * @param value
  *
  * @returns {string}
  */
-function renderString(propConfig, path, value, id) {
+function renderString(propConfig, path, id, name, value) {
 	if (typeof propConfig['enum'] !== "undefined") {
-		return renderEnum(propConfig, path, value, id);
+		return renderEnum(propConfig, path, id, name, value);
 	}
-	return renderInputControl(propConfig, path, value, id);
+	return renderInputControl(propConfig, path, id, name, value);
 }
 
 /**
  *
  * @param propConfig
  * @param path
+ * @param id
+ * @param name
  * @param value
  *
  * @returns {string}
  */
-function renderEnum(propConfig, path, value) {
+function renderEnum(propConfig, path, id, name, value) {
 	var chunk = [];
-	var id = path.join('-');
-	var name = 'root[' + path.join('][') + ']';
+	//var id = path.join('-');
+	//var name = 'root[' + path.join('][') + ']';
 
 	if ((value === undefined) && (propConfig['default'] !== undefined)) {
 		value = propConfig['default'];
@@ -267,7 +271,7 @@ function renderEnum(propConfig, path, value) {
 	var inputRenderer = (propConfig.options && propConfig.options.inputRenderer) ?
 			propConfig.options.inputRenderer : null;
 	if (hasInputRenderer(inputRenderer)) {
-		return applyInputRenderer(inputRenderer, propConfig, path, value, id)
+		return applyInputRenderer(inputRenderer, propConfig, path, id, name, value)
 	}
 
 	// default input renderer
@@ -324,11 +328,12 @@ function renderInputLabel (id, text, required) {
  * @param propConfig
  * @param path
  * @param id
+ * @param name
  * @param value
  *
  * @returns {string}
  */
-function renderInputControl (propConfig, path, value, id) {
+function renderInputControl (propConfig, path, id, name, value) {
 
 	// determine input type
 	var type = propConfig.format || 'text';
@@ -339,12 +344,10 @@ function renderInputControl (propConfig, path, value, id) {
 	// custom input renderer
 
 	if (hasInputRenderer(type)) {
-		return applyInputRenderer(type, propConfig, path, value, id)
+		return applyInputRenderer(type, propConfig, path, id, name, value)
 	}
 
 	// default input renderer
-
-	var name = propConfig.name;
 
 	var description = propConfig.description;
 

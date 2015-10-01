@@ -26,6 +26,12 @@ function hasInputRenderer(id) {
 
 /**
  *
+ * @param propConfig
+ * @param path
+ * @param name
+ * @param value
+ * @param id
+ *
  * @returns string
  */
 function applyInputRenderer() {
