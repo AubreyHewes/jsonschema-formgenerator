@@ -98,7 +98,7 @@ function renderChunk(path, propConfig, value) {
 						var $el = $(this);
 						$el.attr('name', $el.attr('name') + '[]').find('option').each(function () {
 							var $el = $(this);
-							if (value.indexOf($el.val()) !== -1) {
+							if (value && value.indexOf($el.val()) !== -1) {
 								$el.attr('selected', 'selected');
 							}
 						});
@@ -235,6 +235,7 @@ function renderNumber(propConfig, path, id, name, value) {
 	if (typeof propConfig['enum'] !== "undefined") {
 		return renderEnum(propConfig, path, id, name, value);
 	}
+	propConfig.format = 'number';
 	return renderInputControl(propConfig, path, id, name, value);
 }
 
@@ -381,6 +382,8 @@ function renderInputControl (propConfig, path, id, name, value) {
 			(propConfig.pattern ? ' pattern="' + propConfig.pattern + '"' : '') +
 			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
 			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
+			(propConfig.min ? ' min="' + propConfig.min + '"' : '') +
+			(propConfig.max ? ' max="' + propConfig.max + '"' : '') +
 			(value ? ' value="' + value + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
