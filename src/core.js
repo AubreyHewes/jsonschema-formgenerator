@@ -92,10 +92,20 @@ function renderChunk(path, propConfig, value) {
 				propConfig.items.title = propConfig.title;
 
 				chunk.push(renderChunk(subPath, propConfig.items, value).then(function (html) {
+					// @todo renderer (instead of dom manipulation)
 					var $html = $(html);
-					$html.find('select').prop('multiple', 'multiple');
+					$html.find('select').prop('multiple', 'multiple').each(function () {
+						var $el = $(this);
+						$el.attr('name', $el.attr('name') + '[]').find('option').each(function () {
+							var $el = $(this);
+							if (value.indexOf($el.val()) !== -1) {
+								$el.attr('selected', 'selected');
+							}
+						});
+					});
 					return $html.html();
 				}));
+
 
 			} else {
 
