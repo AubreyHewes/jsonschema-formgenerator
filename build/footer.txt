@@ -1,9 +1,0 @@
-
-	return {
-		render: renderObject,
-		renderChunk: renderChunk,
-		addRenderer: addRenderer,
-		addInputRenderer: addInputRenderer
-	};
-
-}));
