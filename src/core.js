@@ -288,6 +288,8 @@ function renderEnum(propConfig, path, id, name, value) {
 	// default input renderer
 	var multiple = propConfig.options && propConfig.options.multiple === true;
 	var readOnly = propConfig.options && propConfig.options.readOnly === true;
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : '';
+
 	switch(propConfig.inputType) {
 		case 'radio':
 			chunk.push('<div class="radiogroup">');
@@ -305,6 +307,7 @@ function renderEnum(propConfig, path, id, name, value) {
 
 		default:
 			chunk.push('<select name="' + name + '" id="' + id + '"' +
+				(classes ? ' class="' + classes + '"' : '') +
 				(readOnly ? ' readonly="readonly"' : '') +
 				(multiple ? ' multiple="multiple"' : '') +
 				'>');
@@ -363,9 +366,11 @@ function renderInputControl (propConfig, path, id, name, value) {
 	var description = propConfig.description;
 
 	var readOnly = propConfig.options && propConfig.options.readOnly == true;
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : '';
 
 	if (type === 'textarea') {
 		return '<textarea type="text"' +
+			(classes ? ' class="' + classes +'"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
 			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
@@ -377,6 +382,7 @@ function renderInputControl (propConfig, path, id, name, value) {
 	}
 	return '<input ' +
 			(type ? ' type="' + type + '"' : '') +
+			(classes ? ' class="' + classes +'"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
 			(propConfig.pattern ? ' pattern="' + propConfig.pattern + '"' : '') +
