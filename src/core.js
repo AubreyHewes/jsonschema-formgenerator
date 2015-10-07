@@ -288,7 +288,8 @@ function renderEnum(propConfig, path, id, name, value) {
 	// default input renderer
 	var multiple = propConfig.options && propConfig.options.multiple === true;
 	var readOnly = propConfig.options && propConfig.options.readOnly === true;
-	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : '';
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : false;
+	var rules = propConfig.options && propConfig.options.rules ? propConfig.options.rules : false;
 
 	switch(propConfig.inputType) {
 		case 'radio':
@@ -310,6 +311,7 @@ function renderEnum(propConfig, path, id, name, value) {
 				(classes ? ' class="' + classes + '"' : '') +
 				(readOnly ? ' readonly="readonly"' : '') +
 				(multiple ? ' multiple="multiple"' : '') +
+				(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 				'>');
 			$.each(propConfig['enum'], function (key, optionValue) {
 				chunk.push('<option value="' + optionValue +'"' +
@@ -366,7 +368,8 @@ function renderInputControl (propConfig, path, id, name, value) {
 	var description = propConfig.description;
 
 	var readOnly = propConfig.options && propConfig.options.readOnly == true;
-	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : '';
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : false;
+	var rules = propConfig.options && propConfig.options.rules ? propConfig.options.rules : false;
 
 	if (type === 'textarea') {
 		return '<textarea type="text"' +
@@ -377,6 +380,7 @@ function renderInputControl (propConfig, path, id, name, value) {
 			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
+			(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 			'>' +
 			(value || '') + '</textarea>';
 	}
@@ -393,6 +397,7 @@ function renderInputControl (propConfig, path, id, name, value) {
 			(value ? ' value="' + value + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
+			(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 			'/>';
 }
 

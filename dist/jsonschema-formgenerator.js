@@ -302,6 +302,9 @@ function renderEnum(propConfig, path, id, name, value) {
 	// default input renderer
 	var multiple = propConfig.options && propConfig.options.multiple === true;
 	var readOnly = propConfig.options && propConfig.options.readOnly === true;
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : false;
+	var rules = propConfig.options && propConfig.options.rules ? propConfig.options.rules : false;
+
 	switch(propConfig.inputType) {
 		case 'radio':
 			chunk.push('<div class="radiogroup">');
@@ -319,8 +322,10 @@ function renderEnum(propConfig, path, id, name, value) {
 
 		default:
 			chunk.push('<select name="' + name + '" id="' + id + '"' +
+				(classes ? ' class="' + classes + '"' : '') +
 				(readOnly ? ' readonly="readonly"' : '') +
 				(multiple ? ' multiple="multiple"' : '') +
+				(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 				'>');
 			$.each(propConfig['enum'], function (key, optionValue) {
 				chunk.push('<option value="' + optionValue +'"' +
@@ -377,20 +382,25 @@ function renderInputControl (propConfig, path, id, name, value) {
 	var description = propConfig.description;
 
 	var readOnly = propConfig.options && propConfig.options.readOnly == true;
+	var classes = propConfig.options && propConfig.options.inputClasses ? propConfig.options.inputClasses.join(' ') : false;
+	var rules = propConfig.options && propConfig.options.rules ? propConfig.options.rules : false;
 
 	if (type === 'textarea') {
 		return '<textarea type="text"' +
+			(classes ? ' class="' + classes +'"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
 			(propConfig.minLength ? ' minlength="' + propConfig.minLength + '"' : '') +
 			(propConfig.maxLength ? ' maxlength="' + propConfig.maxLength + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
+			(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 			'>' +
 			(value || '') + '</textarea>';
 	}
 	return '<input ' +
 			(type ? ' type="' + type + '"' : '') +
+			(classes ? ' class="' + classes +'"' : '') +
 			(id ? ' id="' + id + '"' : '') +
 			(name ? ' name="' + name + '"' : '') +
 			(propConfig.pattern ? ' pattern="' + propConfig.pattern + '"' : '') +
@@ -401,6 +411,7 @@ function renderInputControl (propConfig, path, id, name, value) {
 			(value ? ' value="' + value + '"' : '') +
 			(description ? ' placeholder="' + description + '"' : '') +
 			(readOnly ? ' readonly="true"' : '') +
+			(rules ? " data-rules='" + JSON.stringify(rules) + "'" : '') +
 			'/>';
 }
 
