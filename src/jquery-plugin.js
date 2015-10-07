@@ -3,9 +3,12 @@
  *
  * @param schema
  * @param data
+ *
+ * @return Promise
  */
 $.fn.appendSchema = function (schema, data) {
-	renderObject(schema, [], data).then(function (html) {
-		$(this).append(html);
+	var $el = $(this);
+	return renderObject(schema, [], data || {}).then(function (html) {
+		return $el.append(html);
 	});
 };

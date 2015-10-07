@@ -1,6 +1,6 @@
 
 	return {
-		render: renderObject,
+		render: render,
 		renderChunk: renderChunk,
 		addRenderer: addRenderer,
 		addInputRenderer: addInputRenderer

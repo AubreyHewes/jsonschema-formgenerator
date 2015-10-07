@@ -20,6 +20,21 @@
  * @todo depends on jquery -- todo is to remove dependencies and build for multiple distribution types
  */
 
+/**
+ * @export render
+ *
+ * @param schema
+ * @param path
+ * @param data
+ *
+ * @returns {*}
+ */
+function render(schema, path, data) {
+	return renderObject(schema, path, data).then(function (html) {
+		applyEventHandlers();
+		return html;
+	});
+}
 
 /**
  * Promise render of given chunks
@@ -71,13 +86,7 @@ function renderChunk(path, propConfig, value) {
 	switch (propConfig.type) {
 		case undefined: //complex type
 		case 'object':
-			chunk.push('<div class="fieldset">');
-			if (propConfig.title) {
-				chunk.push('<div class="legend">' + propConfig.title + '</div>');
-			}
-
 			chunk.push(renderObject(propConfig, subPath, value));
-			chunk.push('</div>');
 			break;
 
 		case 'number':
@@ -155,12 +164,72 @@ function renderChunk(path, propConfig, value) {
 }
 
 /**
- *
- * @export render
+ * @TODO klevera
  *
  * @param schema
  * @param path
  * @param data
+ *
+ * @returns {*}
+ */
+function renderOneOf(schema, path, data) {
+	var chunks = [];
+	var subSchemaChunks = [];
+
+	var propName = path.pop();
+	var id = (path.length ? path.join('-') + '-' : '') + propName;
+
+	var chunk = ['<div class="schema-property schema-property-oneOf-selector">'];
+
+	chunks.push('<label for="' + id + '">' + schema.title + '</label>');
+	chunks.push('<select id="' + id + '" class="schema-property-oneOf-selector">');
+	$.each(schema.oneOf, function (idx, subSchema) {
+		chunks.push('<option value="' + idx +'">' + subSchema.title + '</option>');
+		delete subSchema.title;
+		subSchemaChunks.push(renderObject(subSchema, path, data));
+	});
+
+	chunks.push('</select>');
+	chunks.push('</div>');
+	chunks.push('<div class="schema-property schema-property-oneOf" style="display:none">');
+	chunks.push(renderChunks(subSchemaChunks));
+	chunks.push('</div>');
+
+	addEventHandler(function () {
+		$(document).on('change', '.schema-property-oneOf-selector', function () {
+			var $target = $(event.target);
+			$target.closest('.fieldset').siblings('.schema-property-oneOf').show()
+			.find('> .fieldset').hide().each(function (idx) {
+				if (idx === parseInt($target.val(), 10)) {
+					$(this).show();
+				}
+			});
+		});
+	});
+
+	return renderChunks(chunks);
+}
+
+/**
+ *
+ * @param schema
+ * @param path
+ * @param data
+ *
+ * @returns {*}
+ */
+function renderAllOf(schema, path, data) {
+	$.each(schema.allOf, function (key, subSchema) {
+		chunkPromises.push(renderObject(subSchema, path, data));
+	});
+	return renderChunks(chunks);
+}
+
+/**
+ * @param schema
+ * @param path
+ * @param data
+ *
  * @returns {*}
  */
 function renderObject (schema, path, data) {
@@ -168,17 +237,18 @@ function renderObject (schema, path, data) {
 	data = data || {};
 
 	if (schema.properties === undefined) {
+
 		if (schema.allOf) {
-			$.each(schema.allOf, function (key, subSchema) {
-				chunkPromises.push(renderObject(subSchema, path, data));
-			});
+			chunkPromises.push('<div class="fieldset">');
+			chunkPromises.push(renderAllOf(schema, path, data));
+			chunkPromises.push('</div>');
 			return renderChunks(chunkPromises);
 		}
 
 		if (schema.oneOf) {
-			$.each(schema.oneOf, function (key, subSchema) {
-				chunkPromises.push(renderObject(subSchema, path, data));
-			});
+			chunkPromises.push('<div class="fieldset">');
+			chunkPromises.push(renderOneOf(schema, path, data));
+			chunkPromises.push('</div>');
 			return renderChunks(chunkPromises);
 		}
 
@@ -195,11 +265,16 @@ function renderObject (schema, path, data) {
 		return renderChunks(chunkPromises);
 	}
 
+	chunkPromises.push('<div class="fieldset">');
+	if (schema.title) {
+		chunkPromises.push('<div class="legend">' + schema.title + '</div>');
+	}
 	$.each(schema.properties, function (propName, propConfig) {
 		path.slice(0);
 		path.push(propName);
 		chunkPromises.push(renderChunk(path, propConfig, data[propName]));
 	});
+	chunkPromises.push('</div>');
 
 	return renderChunks(chunkPromises).then(function (html) {
 
@@ -422,6 +497,18 @@ function renderInputControl (propConfig, path, id, name, value) {
 //}
 
 
+var eventHandlers = [];
+
+function addEventHandler(fn) {
+	eventHandlers.push(fn);
+}
+
+function applyEventHandlers() {
+	eventHandlers.forEach(function (fn) {
+		fn();
+	});
+}
+
 var renderers = {};
 
 /**
@@ -514,16 +601,19 @@ function applyInputRenderer() {
  *
  * @param schema
  * @param data
+ *
+ * @return Promise
  */
 $.fn.appendSchema = function (schema, data) {
-	renderObject(schema, [], data).then(function (html) {
-		$(this).append(html);
+	var $el = $(this);
+	return renderObject(schema, [], data || {}).then(function (html) {
+		return $el.append(html);
 	});
 };
 
 
 	return {
-		render: renderObject,
+		render: render,
 		renderChunk: renderChunk,
 		addRenderer: addRenderer,
 		addInputRenderer: addInputRenderer

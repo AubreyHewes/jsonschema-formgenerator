@@ -12,6 +12,7 @@ gulp.task('default', function() {
   return gulp.src([
     'build/header.txt',
     'src/core.js',
+    'src/events.js',
     'src/customRenderer.js',
     'src/customInputRenderer.js',
     'src/jquery-plugin.js',

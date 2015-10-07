@@ -27,6 +27,7 @@
     "url": "https://github.com/aubreyhewes/jsonschema-formrenderer.git"
   },
   "dependencies": {
+    "bluebird": "^2.10.2",
     "jquery": "~1.11.3"
   },
   "devDependencies": {
