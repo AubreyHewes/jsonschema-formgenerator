@@ -1,6 +1,4 @@
-# WIP
-
-# JSON Schema Form Generator
+# JSON Schema Form Generator (WIP)
 
 Generate a form/form-input-structure from a given JSON-Schema.
 
@@ -12,37 +10,39 @@ If the given data structure matches then the data will be added as values.
 **DIY**
 
 * style yourself
+* action yourself 
+    * array needs a "add new item action" which duplicates the array schema as an item -- _possible change_
 * data-bind yourself
-* action yourself (i.e. array needs a "add new item action" which duplicates the array schema as an item) -- possible change
 
+## Usage
+
+Is UMD/AMD/Global compatible via [gulp-umd](gulp-umd)
+
+### UMD
+
+    var generator = require("jsonschema-formgenerator");
+
+### AMD/RequireJS
+
+    require(["jsonschema-formgenerator"], function (generator) {});
+
+### Global
+
+    window.JsonschemaFormgenerator;
+    
 ## Methods
 
 ### render
 Will render schema as form elements from given path adding possible initial data to fields.
 
-#### Modular
-
-    var html = require("jsonschema-formrenderer").render(schema, path, data);
-    
-#### Global
-
-    var html = JSONSchemaFormRenderer.render(schema, path, data);
-
 ### renderChunk
 Will render given schema definition as form elements from given path adding possible initial data to fields.
 _This could be seen as a double but it actually works differently.._
 
-#### Modular
-
-    var html = require("jsonschema-formrenderer").renderChunk(path, propertyCfg, data);
-    
-#### Global
-
-    var html = JSONSchemaFormRenderer.renderChunk(path, propertyCfg, data);
-
 ## Options
 
 Options need to be set before a render action.
+_TODO_
 
 ## TODO
  * [ ] simple interface
@@ -52,11 +52,12 @@ Options need to be set before a render action.
  * [ ] Render-form method which includes form tag and using options (i.e. force array item; to force a minimal array item if none set)
  * [x] jquery plugin/function for appending a rendered schema to current element
     * [ ] append a rendered schema/form to current element
+ * [ ] Possible options
 
 ### Possible future
  * [ ] remove jquery dependency
  * [ ] add buttons for action hinting (note action is not included)
  * [ ] add possibility to overload templates (currently hardcoded -- possible Handlebars though adds extra dependency)
-     * i.e. bootstrap-correct html (though via css the output html can already be bootstrapped even if it is not the "correct" html).. also can alsojust be manipulated after render.
+     * i.e. bootstrap-correct html (though via css the output html can already be bootstrapped even if it is not the "correct" html).. also can also just be manipulated after render.
  
  
