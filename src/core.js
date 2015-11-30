@@ -96,39 +96,8 @@ function renderChunk(path, propConfig, value) {
 
 		case 'array':
 
-			if (propConfig.items.enum) { // multiple select
+			chunk.push(renderArray(propConfig, subPath, id, name, value));
 
-				propConfig.items.title = propConfig.title;
-
-				chunk.push(renderChunk(subPath, propConfig.items, value).then(function (html) {
-					// @todo renderer (instead of dom manipulation)
-					var $html = $(html);
-					$html.find('select').prop('multiple', 'multiple').each(function () {
-						var $el = $(this);
-						$el.attr('name', $el.attr('name') + '[]').find('option').each(function () {
-							var $el = $(this);
-							if (value && value.indexOf($el.val()) !== -1) {
-								$el.attr('selected', 'selected');
-							}
-						});
-					});
-					return $html.html();
-				}));
-
-
-			} else {
-
-				chunk.push('<div class="fieldset">');
-				if (propConfig.title) {
-					chunk.push('<div class="legend">' + propConfig.title + '</div>');
-				}
-				$.each(value || {}, function (key, subData) {
-					var itemSubPath = subPath.slice(0);
-					itemSubPath.push(key);
-					chunk.push(renderChunk(itemSubPath, propConfig.items, subData));
-				});
-				chunk.push('</div>');
-			}
 			break;
 
 		case 'string':
@@ -214,6 +183,14 @@ function renderAllOf(schema, path, data) {
 }
 
 /**
+ *
+ * @returns {*}
+ */
+function getRef() {
+	return $.when({});
+}
+
+/**
  * @param schema
  * @param path
  * @param data
@@ -240,15 +217,15 @@ function renderObject (schema, path, data) {
 			return renderChunks(chunkPromises);
 		}
 
-		//if (schema.$ref) {
-		//	return utils.getCachedXhrPromise('get', schema.$ref).then(function (subSchema) {
-		//		if (subSchema.properties) {
-		//			return renderObject(subSchema, path, data);
-		//		} else {
-		//			return renderChunk(path, subSchema, data);
-		//		}
-		//	});
-		//}
+		if (schema.$ref) {
+			return this.getRef(schema.$ref).then(function (subSchema) {
+				if (subSchema.properties) {
+					return renderObject(subSchema, path, data);
+				} else {
+					return renderChunk(path, subSchema, data);
+				}
+			});
+		}
 
 		return renderChunks(chunkPromises);
 	}
@@ -278,6 +255,43 @@ function renderObject (schema, path, data) {
 
 		return html;
 	});
+}
+
+function renderArray(propConfig, subPath, id, name, value) {
+	var chunk = [];
+	if (propConfig.items.enum) { // multiple select
+
+		propConfig.items.title = propConfig.title;
+
+		chunk.push(renderChunk(subPath, propConfig.items, value).then(function (html) {
+			// @todo renderer (instead of dom manipulation)
+			var $html = $(html);
+			$html.find('select').prop('multiple', 'multiple').each(function () {
+				var $el = $(this);
+				$el.attr('name', $el.attr('name') + '[]').find('option').each(function () {
+					var $el = $(this);
+					if (value && value.indexOf($el.val()) !== -1) {
+						$el.attr('selected', 'selected');
+					}
+				});
+			});
+			return $html.html();
+		}));
+
+	} else {
+
+		chunk.push('<div class="fieldset">');
+		if (propConfig.title) {
+			chunk.push('<div class="legend">' + propConfig.title + '</div>');
+		}
+		$.each(value || {}, function (key, subData) {
+			var itemSubPath = subPath.slice(0);
+			itemSubPath.push(key);
+			chunk.push(renderChunk(itemSubPath, propConfig.items, subData));
+		});
+		chunk.push('</div>');
+	}
+	return renderChunks(chunk);
 }
 
 /**
