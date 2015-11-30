@@ -134,31 +134,34 @@ function renderOneOf(schema, path, data) {
 	var subSchemaChunks = [];
 
 	var propName = path.pop();
+	var name = 'root' + (path.length ? '[' + path.join('][')+ ']' : '') + '[' + propName + ']';
 	var id = (path.length ? path.join('-') + '-' : '') + propName;
 
 	var chunk = ['<div class="schema-property schema-property-oneOf-selector">'];
 
 	chunks.push('<label for="' + id + '">' + schema.title + '</label>');
-	chunks.push('<select id="' + id + '" class="schema-property-oneOf-selector">');
+	chunks.push('<select id="' + id + '" name="' + name + '" class="schema-property-oneOf-selector">');
 	$.each(schema.oneOf, function (idx, subSchema) {
 		chunks.push('<option value="' + idx +'">' + subSchema.title + '</option>');
 		delete subSchema.title;
+		subSchema.disabled = true;
+		console.log('oneOF adata', data);
 		subSchemaChunks.push(renderObject(subSchema, path, data));
 	});
 
 	chunks.push('</select>');
 	chunks.push('</div>');
-	chunks.push('<div class="schema-property schema-property-oneOf" style="display:none">');
+	chunks.push('<div class="schema-property schema-property-' + propName + ' schema-property-oneOf" style="display:none">');
 	chunks.push(renderChunks(subSchemaChunks));
 	chunks.push('</div>');
 
 	addEventHandler(function () {
 		$(document).on('change', '.schema-property-oneOf-selector', function () {
 			var $target = $(event.target);
-			$target.closest('.fieldset').siblings('.schema-property-oneOf').show()
-			.find('> .fieldset').hide().each(function (idx) {
+			$target.closest('.schema-property').siblings('.schema-property-oneOf').show()
+			.find('> fieldset').attr('disabled', 'disabled').hide().each(function (idx) {
 				if (idx === parseInt($target.val(), 10)) {
-					$(this).show();
+					$(this).removeAttr('disabled').show();
 				}
 			});
 		});
@@ -176,6 +179,7 @@ function renderOneOf(schema, path, data) {
  * @returns {*}
  */
 function renderAllOf(schema, path, data) {
+	var chunkPromises = [];
 	$.each(schema.allOf, function (key, subSchema) {
 		chunkPromises.push(renderObject(subSchema, path, data));
 	});
@@ -204,16 +208,16 @@ function renderObject (schema, path, data) {
 	if (schema.properties === undefined) {
 
 		if (schema.allOf) {
-			chunkPromises.push('<div class="fieldset">');
+			chunkPromises.push('<fieldset>');
 			chunkPromises.push(renderAllOf(schema, path, data));
-			chunkPromises.push('</div>');
+			chunkPromises.push('</fieldset>');
 			return renderChunks(chunkPromises);
 		}
 
 		if (schema.oneOf) {
-			chunkPromises.push('<div class="fieldset">');
+			chunkPromises.push('<fieldset>');
 			chunkPromises.push(renderOneOf(schema, path, data));
-			chunkPromises.push('</div>');
+			chunkPromises.push('</fieldset>');
 			return renderChunks(chunkPromises);
 		}
 
@@ -230,7 +234,7 @@ function renderObject (schema, path, data) {
 		return renderChunks(chunkPromises);
 	}
 
-	chunkPromises.push('<div class="fieldset">');
+	chunkPromises.push('<fieldset' + (schema.disabled ? ' disabled="disabled"' : '') + '>');
 	if (schema.title) {
 		chunkPromises.push('<div class="legend">' + schema.title + '</div>');
 	}
@@ -239,7 +243,7 @@ function renderObject (schema, path, data) {
 		path.push(propName);
 		chunkPromises.push(renderChunk(path, propConfig, data[propName]));
 	});
-	chunkPromises.push('</div>');
+	chunkPromises.push('</fieldset>');
 
 	return renderChunks(chunkPromises).then(function (html) {
 
@@ -280,7 +284,7 @@ function renderArray(propConfig, subPath, id, name, value) {
 
 	} else {
 
-		chunk.push('<div class="fieldset">');
+		chunk.push('<fieldset>');
 		if (propConfig.title) {
 			chunk.push('<div class="legend">' + propConfig.title + '</div>');
 		}
@@ -289,7 +293,7 @@ function renderArray(propConfig, subPath, id, name, value) {
 			itemSubPath.push(key);
 			chunk.push(renderChunk(itemSubPath, propConfig.items, subData));
 		});
-		chunk.push('</div>');
+		chunk.push('</fieldset>');
 	}
 	return renderChunks(chunk);
 }
