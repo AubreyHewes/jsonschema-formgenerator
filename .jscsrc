@@ -1,0 +1,19 @@
+{
+  "preset": "google",
+  "verbose": true,
+  "validateQuoteMarks": "'",
+  "disallowSpacesInsideObjectBrackets": null,
+  "disallowSpacesInFunctionExpression": null,
+  "disallowSpacesInAnonymousFunctionExpression": null,
+  "maximumLineLength": {
+    "value": 120,
+    "allExcept": ["comments", "regex"]
+  },
+  "maxErrors": 512,
+  "excludeFiles": [
+    "**/*.min.js"
+  ],
+  "fileExtensions": [
+    ".js", ".jsx"
+  ]
+}
