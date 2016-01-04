@@ -172,16 +172,16 @@ function renderOneOf(schema, path, data) {
 
 /**
  *
- * @param schema
+ * @param schemas
  * @param path
  * @param data
  *
  * @returns {*}
  */
-function renderAllOf(schema, path, data) {
-	var chunkPromises = [];
-	$.each(schema.allOf, function (key, subSchema) {
-		chunkPromises.push(renderObject(subSchema, path, data));
+function renderAllOf(schemas, path, data) {
+	var chunks = [];
+	$.each(schemas, function (key, subSchema) {
+		chunks.push(renderChunk(path, subSchema, data));
 	});
 	return renderChunks(chunks);
 }
@@ -207,9 +207,9 @@ function renderObject (schema, path, data) {
 
 	if (schema.properties === undefined) {
 
-		if (schema.allOf) {
+		if (schema.allOf || schema.extends) {
 			chunkPromises.push('<fieldset>');
-			chunkPromises.push(renderAllOf(schema, path, data));
+			chunkPromises.push(renderAllOf(schema.allOf ? schema.allOf : schema.extends, path, data));
 			chunkPromises.push('</fieldset>');
 			return renderChunks(chunkPromises);
 		}
