@@ -79,7 +79,7 @@ function renderChunk(path, propConfig, value) {
     case 'integer':
 
       // @todo generic render type label/input (reduce duplication)
-      if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
+      if (!(propConfig.options && propConfig.options.inputRenderer === 'hidden')) {
         chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
       }
       chunk.push(renderNumber(propConfig, subPath, id, name, value));
@@ -88,10 +88,10 @@ function renderChunk(path, propConfig, value) {
     case 'boolean':
 
       // @todo generic render type label/input (reduce duplication)
-      chunk.push(renderBoolean(propConfig, subPath, id, name, value));
-      //if (!(propConfig.options && propConfig.options.inputRenderer === "hidden")) {
-      //	chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName));
-      //}
+      chunk.push(propConfig.options && propConfig.options.inputRenderer === 'hidden' ?
+        renderInputControl(propConfig, subPath, id, name, value) :
+        renderBoolean(propConfig, subPath, id, name, value)
+      );
       break;
 
     case 'array':
@@ -104,7 +104,7 @@ function renderChunk(path, propConfig, value) {
       // @todo generic render type label/input (reduce duplication)
 
       propConfig.isEnum = (propConfig['enum'] !== undefined);
-      propConfig.isHidden = propConfig.options && propConfig.options.inputRenderer === "hidden";
+      propConfig.isHidden = propConfig.options && propConfig.options.inputRenderer === 'hidden';
 
       if (propConfig.isEnum && !propConfig.isHidden || !propConfig.isHidden) {
         chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName, (!propConfig.isEnum && propConfig.minLength)));
