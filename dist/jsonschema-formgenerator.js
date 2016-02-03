@@ -152,7 +152,6 @@ function renderOneOf(schema, path, data) {
   chunks.push('<select id="' + id + '" name="' + name + '" class="schema-property-oneOf-selector">');
   $.each(schema.oneOf, function (idx, subSchema) {
     chunks.push('<option value="' + idx + '">' + subSchema.title + '</option>');
-    delete subSchema.title;
     subSchema.disabled = true;
     subSchemaChunks.push(renderObject(subSchema, path, data));
   });
