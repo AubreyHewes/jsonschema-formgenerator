@@ -145,7 +145,6 @@ function renderOneOf(schema, path, data) {
     chunks.push('<option value="' + idx + '">' + subSchema.title + '</option>');
     delete subSchema.title;
     subSchema.disabled = true;
-    console.log('oneOF adata', data);
     subSchemaChunks.push(renderObject(subSchema, path, data));
   });
 
@@ -160,7 +159,7 @@ function renderOneOf(schema, path, data) {
       var $target = $(event.target);
       $target.closest('.schema-property').siblings('.schema-property-oneOf').show()
         .find('> fieldset').attr('disabled', 'disabled').hide().each(function (idx) {
-        if (idx === parseInt($target.val(), 10)) {
+        if (idx === $target[0].selectedIndex) {
           $(this).removeAttr('disabled').show();
         }
       });
