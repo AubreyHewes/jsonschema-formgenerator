@@ -149,7 +149,9 @@ function renderOneOf(schema, path, data) {
   var chunk = ['<div class="schema-property schema-property-oneOf-selector">'];
 
   chunks.push('<label for="' + id + '">' + schema.title + '</label>');
-  chunks.push('<select id="' + id + '" name="' + name + '" class="schema-property-oneOf-selector">');
+  chunks.push('<select id="' + id + '" class="schema-property-oneOf-selector">');
+
+  path.push(propName);
   $.each(schema.oneOf, function (idx, subSchema) {
     chunks.push('<option value="' + idx + '">' + subSchema.title + '</option>');
     subSchema.disabled = true;
