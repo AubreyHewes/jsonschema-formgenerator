@@ -115,10 +115,16 @@ function renderChunk(path, propConfig, value) {
       propConfig.isEnum = (propConfig['enum'] !== undefined);
       propConfig.isHidden = propConfig.options && propConfig.options.inputRenderer === 'hidden';
 
+      if (propConfig.isHidden) {
+        chunk = [];
+      }
       if (propConfig.isEnum && !propConfig.isHidden || !propConfig.isHidden) {
         chunk.push(renderInputLabel(id, propConfig.title ? propConfig.title : propName, (!propConfig.isEnum && propConfig.minLength)));
       }
       chunk.push(renderString(propConfig, subPath, id, name, value));
+      if (propConfig.isHidden) {
+        return renderChunks(chunk);
+      }
       break;
 
     default:
