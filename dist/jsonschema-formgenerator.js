@@ -159,7 +159,7 @@ function renderOneOf(schema, path, data) {
 
   path.push(propName);
   $.each(schema.oneOf, function (idx, subSchema) {
-    chunks.push('<option value="' + idx + '">' + subSchema.title + '</option>');
+    chunks.push('<option value="' + subSchema.title + '">' + subSchema.title + '</option>');
     subSchema.disabled = true;
     subSchemaChunks.push(renderObject(subSchema, path, data));
   });
