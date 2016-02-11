@@ -171,7 +171,7 @@ function renderOneOf(schema, path, data) {
   chunks.push('</div>');
 
   addEventHandler(function () {
-    $(document).on('change', '.schema-property-oneOf-selector', function () {
+    $(document).on('change', '.schema-property-oneOf-selector', function (event) {
       var $target = $(event.target);
       $target.closest('.schema-property').siblings('.schema-property-oneOf').show()
         .find('> fieldset').attr('disabled', 'disabled').hide().each(function (idx) {
