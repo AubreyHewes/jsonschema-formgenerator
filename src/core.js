@@ -238,6 +238,10 @@ function renderObject(schema, path, data) {
       });
     }
 
+    if (schema.type && schema.type === 'array' && schema.items) {
+      chunkPromises.push(renderChunk(path, schema, data));
+    }
+
     return renderChunks(chunkPromises);
   }
 
