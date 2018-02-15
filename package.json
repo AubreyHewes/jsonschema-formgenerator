@@ -1,12 +1,13 @@
 {
   "name": "jsonschema-formgenerator",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "JSON Schema Form Renderer",
   "main": "dist/jsonschema-formrenderer.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "build": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
@@ -20,6 +21,7 @@
   ],
   "homepage": "http://aubreyhewes.github.io/jsonschema-formrenderer",
   "author": {
+    "name": "Aubrey Hewes",
     "url": "https://github.com/aubreyhewes/jsonschema-formrenderer/graphs/contributors"
   },
   "repository": {
@@ -27,16 +29,16 @@
     "url": "https://github.com/aubreyhewes/jsonschema-formrenderer.git"
   },
   "dependencies": {
-    "bluebird": "^2.10.2",
-    "jquery": "~1.11.3"
+    "bluebird": "^3.5.1",
+    "jquery": "^1.12.4"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
-    "gulp-jscs": "^3.0.2",
+    "gulp-jscs": "^4.1.0",
     "gulp-jshint": "^2.0.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.1",
+    "gulp-uglify": "^3.0.0",
     "gulp-umd": "^0.2.0",
     "gulp-util": "^3.0.7"
   }
