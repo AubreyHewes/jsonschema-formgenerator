@@ -6,7 +6,7 @@
   } else {
     root.JsonschemaFormgenerator = factory(root.jQuery);
   }
-}(this, function(jQuery) {
+}(this, function($) {
 /**
  * @see http://json-schema.org/latest/json-schema-validation.html#anchor104
  * @see https://developer.mozilla.org/en/docs/Web/HTML/Element/Input
