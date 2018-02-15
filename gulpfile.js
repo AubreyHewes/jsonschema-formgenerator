@@ -25,7 +25,7 @@ gulp.task('default', function() {
   // This will umd the output
   .pipe(umd({
     dependencies: function(/*file*/) {
-      return [ { name: 'jquery', param: 'jQuery', global: 'jQuery' } ];
+      return [ { name: 'jquery', param: '$', global: 'jQuery' } ];
     },
     exports: function(file) {
       return '{render:render,renderChunk:renderChunk,addRenderer:addRenderer,addInputRenderer:addInputRenderer}';
